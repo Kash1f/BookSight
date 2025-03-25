@@ -12,4 +12,12 @@ router.post('/register', async (req, res) => {
   if(password.length < 6) {
     res.status(400).json({ message: 'Password must be at least 6 characters long' });
   }
+  if(username.length < 3) {
+    res.status(400).json({ message: 'Username must be at least 3 characters long' });
+  }
+
+  //check if user already exists
+
+  await UserActivation.findOne({ email })
+
 });
