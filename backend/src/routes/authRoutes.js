@@ -24,6 +24,6 @@ router.post('/register', async (req, res) => {
   //check if password is correct
   const isPasswordCorrect = await user.comparePassword(password);s
   if(!isPasswordCorrect) return res.status(400).json({ message: 'Invalid credentials' });
-
-
 });
+
+export default router;
