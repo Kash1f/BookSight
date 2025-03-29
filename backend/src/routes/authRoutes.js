@@ -18,6 +18,12 @@ router.post('/register', async (req, res) => {
 
   //check if user already exists
 
-  await UserActivation.findOne({ email })
+  await UserActivation.findOne({ email });
+  if(!user) return res.status(400).json({ message: 'Invalid credentials' });
+
+  //check if password is correct
+  const isPasswordCorrect = await user.comparePassword(password);s
+  if(!isPasswordCorrect) return res.status(400).json({ message: 'Invalid credentials' });
+
 
 });
