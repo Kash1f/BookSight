@@ -25,3 +25,18 @@ router.post('/', (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+//pagination => infinite loading
+
+router.get('/', async (req, res) => {
+  try{
+  const books = await Book.find().sort({ createdAt: -1 });
+  res.send(books);
+  } catch(err) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+})
+
+
+
+export default router;
