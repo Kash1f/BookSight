@@ -9,7 +9,6 @@ router.post('/', (req, res) => {
     if(!title || !author || !description || !price || !image) {
       return res.status(400).json({ message: 'Please provide all the required fields' });
     }
-
     const book = new Book({
       title,
       author,
@@ -27,7 +26,6 @@ router.post('/', (req, res) => {
 });
 
 //pagination => infinite loading
-
 router.get('/', async (req, res) => {
   try{
   const books = await Book.find().sort({ createdAt: -1 });
