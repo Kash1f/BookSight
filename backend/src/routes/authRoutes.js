@@ -1,7 +1,15 @@
 import express from "express";
+import User from "../models/User";
+import jwt from "jsonwebtoken";
 
 //creating a new router instance
 const router = express.Router();
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  });
+};
+
 
 router.post("/register", async (req, res) => {
   try {
@@ -30,25 +38,19 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Username already exists" });
     }
 
-    const newUser = new User({
+    const user = new User({
       username,
       email,
       password,
     });
-    await newUser.save();
+    await user.save(); //save the user to the database
 
+    //once the user has been created, we will generate a token and send it to the client
+
+    const token = generateToken(user._id); //generate a token using the user id, this function will be created in the utils folder
 
   } catch (error) {}
 });
-
-
-
-
-
-
-
-
-
 
 router.post("/login", async (req, res) => {
   res.send("Login route");
