@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-  name: {
+  username: {
     type: String,
     required: true,
   },
@@ -19,18 +19,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     default:""
   },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
-export default mongoose.model('User', userSchema);
+//hash password before savving user to the database
+
+userSchema.pre('save', async function (next) {
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+
+const User = mongoose.model('User', userSchema);
+
+export default User;
+
+//users collection will be created in the database
+
+//we are gonna have our user model where every single user will have username, email, password and profile image
