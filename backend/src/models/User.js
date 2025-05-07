@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs"; //for hashing the password
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -74,9 +75,16 @@ export default User;
 // The plain-text password (this.password) is hashed using bcrypt.hash(this.password, salt).
 // The hashed password replaces the plain-text password in the newUser object.
 // If the password hasn't been modified, the middleware skips hashing and calls next() immediately.
-// The next() function is called to proceed with the save operation. Here the newUser.save() wil run when the next() function is called.
+// The next() function is called to proceed with the save operation. Here the user.save() wil run when the next() function is called.
 // Finally, the user document (with the hashed password) is saved to the database.
 
 // The server sends a success response back to the client, indicating that the user has been registered successfully.
 
 //Once the user has been created, we will generate a token and send it to the client
+
+// Flow of jwt token generation:
+// A sign method is used to create a token with a payload, secret key, and options.
+// The token includes a unique userId to identify its owner and requires a secret to be created.
+// The generated token is returned so it can be stored in a variable and sent to the client.
+// After a user is successfully created, a token is generated and sent to the client.
+// A 201 status code indicates resource creation; only public user details (ID, username, email, profile image) are sent, not the password.
