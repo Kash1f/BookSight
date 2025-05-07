@@ -78,3 +78,5 @@ export default User;
 // Finally, the user document (with the hashed password) is saved to the database.
 
 // The server sends a success response back to the client, indicating that the user has been registered successfully.
+
+//Once the user has been created, we will generate a token and send it to the client
