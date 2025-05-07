@@ -38,10 +38,14 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Username already exists" });
     }
 
+    //random profile image generation with user creation
+    const profileImage =  `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
+
     const user = new User({
       username,
       email,
       password,
+      profileImage
     });
     await user.save(); //save the user to the database
 
