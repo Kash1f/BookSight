@@ -12,7 +12,6 @@ const generateToken = (userId) => {
   return jwt.sign({userId}, process.env.JWT_SECRET, {expiresIn: "15d"}) //return the generated token,so it can be stored & sent to client
 }
 
-
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;

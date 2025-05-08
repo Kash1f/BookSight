@@ -20,6 +20,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+},{
+  timestamps: true, //this will create createdAt and updatedAt fields in the database
 });
 
 //hash password before savving user to the database
