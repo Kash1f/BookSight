@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
+
 //creating a new router instance
 const router = express.Router();
 
@@ -10,6 +11,7 @@ const router = express.Router();
 const generateToken = (userId) => {
   return jwt.sign({userId}, process.env.JWT_SECRET, {expiresIn: "15d"}) //return the generated token,so it can be stored & sent to client
 }
+
 
 router.post("/register", async (req, res) => {
   try {
@@ -49,10 +51,10 @@ router.post("/register", async (req, res) => {
     });
     await user.save(); //save the user to the database
 
-    //once the user has been created, we will generate a token and send it to the client
-    const token = generateToken(user._id); //generate a token using the user id, this function will be created in the utils folder
+    //once the user has been created, we will generate a token using a userid and send it to the client
+    const token = generateToken(user._id); 
 
-    //201 means resource created in the backend, we will not send the user completely, instead we will send the user id, username, email
+    //201 means resource(user) is created in the backend, we will not send the user completely, instead we will send userid, username, email
     res.status(201).json({
       token,
       user: {
@@ -65,12 +67,80 @@ router.post("/register", async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Internal Server error" });
   }
 });
 
 router.post("/login", async (req, res) => {
-  res.send("Login route");
+try {
+
+  const {email, password} = req.body;
+
+  if(!email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const user = await User.findOne({ email });
+  if(!user){
+    return res.status(400).json({ message : "Invalid credentials"});
+  }
+
+  const isMatch = await user.comparePassword(password); //compare the password with the hashed password in the database
+  if(!isMatch) {
+    return res.status(400).json({ message: "Invalid credentials" });
+  }
+
+  const token = generateToken(user._id);
+
+  res.status(200).json({
+    token,
+    user: {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      profileImage: user.profileImage,
+    }
+  })
+
+} catch (error){
+  console.error(error);
+  res.status(500).json({ message: "Internal Server error" });
+}
 });
 
 export default router;
+
+
+
+// Full Flow of the Code:
+// Client sends a POST request to /api/auth/register with username, email, and password.
+
+// The server validates the input:
+
+// It checks if all required fields (username, email, password) are provided.
+// It ensures the password meets the minimum length requirement.
+// It checks if a user with the same email or username already exists in the database.
+// If the input is valid and no duplicate user exists:
+
+// A new user is created using the User model with the provided username, email, and password.
+// The newUser.save() call initiates the save operation.
+
+// Mongoose detects the pre('save') middleware and executes it:
+
+// A salt is generated using bcrypt.genSalt(10).
+// The plain-text password (this.password) is hashed using bcrypt.hash(this.password, salt).
+// The hashed password replaces the plain-text password in the newUser object.
+// If the password hasn't been modified, the middleware skips hashing and calls next() immediately.
+// The next() function is called to proceed with the save operation. Here the user.save() wil run when the next() function is called.
+// Finally, the user document (with the hashed password) is saved to the database.
+
+// The server sends a success response back to the client, indicating that the user has been registered successfully.
+
+//Once the user has been created, we will generate a token and send it to the client
+
+// Flow of jwt token generation:
+// A sign method is used to create a token with a payload, secret key, and options.
+// The token includes a unique userId to identify its owner and requires a secret to be created.
+// The generated token is returned so it can be stored in a variable and sent to the client.
+// After a user is successfully created, a token is generated and sent to the client.
+// A 201 status code indicates resource creation; only public user details (ID, username, email, profile image) are sent, not the password.
