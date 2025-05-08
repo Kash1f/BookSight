@@ -74,22 +74,20 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
 try {
 
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   if(!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
+  //check if user exists
   const user = await User.findOne({ email });
-  if(!user){
-    return res.status(400).json({ message : "Invalid credentials"});
-  }
-
+  if(!user) return res.status(400).json({ message : "Invalid Credentials" });
+  
+  //check if the password is correct
   const isMatch = await user.comparePassword(password); //compare the password with the hashed password in the database
-  if(!isMatch) {
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
-
+  if(!isMatch) return res.status(400).json({ message: "Invalid Credentials" });
+  
   const token = generateToken(user._id);
 
   res.status(200).json({
@@ -138,9 +136,13 @@ export default router;
 
 //Once the user has been created, we will generate a token and send it to the client
 
-// Flow of jwt token generation:
+// Flow of jwt token generation in register route:
 // A sign method is used to create a token with a payload, secret key, and options.
 // The token includes a unique userId to identify its owner and requires a secret to be created.
 // The generated token is returned so it can be stored in a variable and sent to the client.
 // After a user is successfully created, a token is generated and sent to the client.
 // A 201 status code indicates resource creation; only public user details (ID, username, email, profile image) are sent, not the password.
+
+//Login Route Flow and JWT Token Generation:
+
+//compare the password with the hashed password in the database in the Users.js file
