@@ -7,4 +7,4 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
-export default cloudinary;
+export default cloudinary; //by using this object we can upload images to cloudinary, we can also delete images from cloudinary
