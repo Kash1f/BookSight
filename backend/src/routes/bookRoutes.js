@@ -1,10 +1,11 @@
 import express from "express";
 import Book from "../models/Book.js";
+import protectRoute from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 //this route creates the post but it will be a protected route, we will show the server our identity means we are authenticated
-router.post("/", async (req, res) => {
+router.post("/", protectRoute, async (req, res) => {
   try {
     const { title, caption, rating, image } = req.body;
     if (!title || !caption || !rating || !image)
