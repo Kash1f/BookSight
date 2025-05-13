@@ -16,7 +16,7 @@ const protectRoute = async (req, res, next) => {
     const user = await User.findById(decoded.id).select("-password"); //select every field except the password from user object
     if (!user) return res.status(401).json({ message: "User not found, access denied" });
 
-    //attach the authenticated user to req.user for access in subsequent middleware or routes, then call next() to proceed to the next handler, the next function in this case is the book route
+    //attach the user to the request object so we can use it in the next middleware or route handler
     req.user = user;
     next();
   } catch (error) {

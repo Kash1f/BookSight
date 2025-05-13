@@ -4,7 +4,7 @@ import protectRoute from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-//this route creates the post but it will be a protected route, we will show the server our identity means we are authenticated
+//this will be a protected route, we will show the server our identity means we are authenticated, req has the user object, this will now be used to create the post
 router.post("/", protectRoute, async (req, res) => {
   try {
     const { title, caption, rating, image } = req.body;
@@ -21,6 +21,7 @@ router.post("/", protectRoute, async (req, res) => {
       caption,
       rating,
       image: imageUrl,
+      user: req.user._id, //this is the user id from the token, req of this route has the user object
     });
 
     await newBook.save();
@@ -32,6 +33,15 @@ router.post("/", protectRoute, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+//get all books
+router.get("/", async (req,res)=>{
+  try {
+    
+  } catch (error) {
+    
+  }
+})
 
 export default router;
 
