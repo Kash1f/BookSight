@@ -35,19 +35,18 @@ router.post("/", protectRoute, async (req, res) => {
 });
 
 //get all books with pagination
-router.get("/", async (req,res)=>{
+router.get("/", async (req, res) => {
   try {
-
     const page = req.query.page || 1; //get the page number from the query string, if not undefined, set it to 1
     const limit = req.query.limit || 5; //get the limit from the query string, if not undefined, set it to 10
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
 
     //sort the books by createdAt in descending order, latest postsfirst
     const books = await Book.find()
-    .sort({ createdAt: -1 }) 
-    .skip(skip)
-    .limit(limit)
-    .populate("user", "username profileImage")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("user", "username profileImage");
 
     const totalBooks = await Book.countDocuments(); //get the total number of books in the database
 
@@ -56,41 +55,43 @@ router.get("/", async (req,res)=>{
       currentPage: page,
       totalBooks,
       totalPages: Math.ceil(totalBooks / limit), //total number of pages
-    })
-
+    });
   } catch (error) {
     console.log("Error getting books", error);
     res.status(500).json({ message: "Internal Server Error" });
-    
   }
-})
+});
 
 router.delete("/:id", protectRoute, async (req, res) => {
   //delete a book if the user is authenticated
-  try{
-
+  try {
     const book = await Book.findById(req.params.id); //find the book in the db using the id provided in the URL
-    if(!book) return res.status(404).json({ message: "Book not found" });
+    if (!book) return res.status(404).json({ message: "Book not found" });
 
     //check if the user is the owner of the book
-    if(book.user.toString() !== req.user._id.toString()) {
-      return res.status(401).json({ message: "You are not authorized to delete this book" });
+    if (book.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(401)
+        .json({ message: "You are not authorized to delete this book" });
     }
 
     //delete the image from cloudinary
-    if(book.image && book.image.includes("cloudinary")) {
-      
+    if (book.image && book.image.includes("cloudinary")) {
+      try {
+        const publicId = book.image.split("/").pop();
+        await cloudinary.uploader.destroy(publicId);
+      } catch (deleteError) {
+        console.log("Error deleting image", deleteError);
+      }
     }
 
     await book.deleteOne(); //delete the book from the database
-
   } catch (error) {
     console.log("Error deleting book", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
-})
+});
 
 export default router;
 
 //When we try to create a post, we need to save an image, we will have all the string values like title, caption, rating etc but we also want to store the images and we are going to upload these images to cloudinary
-
