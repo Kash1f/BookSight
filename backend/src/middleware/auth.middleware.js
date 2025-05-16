@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../models/User";
+import User from "../models/User.js";
 
 //here we will first get the token from the request, then we will verify the token and then we will get the user from the database using the id from the token
 
