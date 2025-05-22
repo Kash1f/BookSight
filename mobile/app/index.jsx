@@ -1,20 +1,26 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Image } from 'expo-image'
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { Link } from "expo-router";
 
 const Index = () => {
   return (
-    <View style={{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-      <Text style={{color: 'blue'}}>Hello</Text>
-     <Image/>
+    <View style={styles.container}>
+      <Text style={styles.title}>Hello</Text>
+      <Link href="/(auth)/signup">Signup Page</Link>
+      <Link href="/(auth)">Login Page</Link>
     </View>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    color: "blue",
+  },
+});
