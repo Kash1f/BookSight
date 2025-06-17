@@ -1,4 +1,5 @@
-📚 Books Platform App
+
+📚 ## Book Store App
 
 Discover and manage your favorite books with this full-stack Book Store App! Developed with a modern tech stack including **React Native** for the mobile frontend and **Node.js, Express, and MongoDB** for the backend, this app provides a smooth and efficient book browsing and purchasing experience.
 
