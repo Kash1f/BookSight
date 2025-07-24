@@ -20,18 +20,18 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { user, sayHello} = useAuthStore();
-
-  console.log("user is here: ", user);
-  
-
-  const {  isLoading, register } = useState();
+  const { user, isLoading, register, token } = useAuthStore();
 
   const router = useRouter();
 
+  //we'll get a result when calling this register function
   const handleSignUp = async () => {
-   sayHello();
+    const result = await register(username, email, password);
+    if (!result.success) Alert.alert("Error", result.error);
   };
+
+  console.log(user);
+  console.log(token);
 
   return (
     <KeyboardAvoidingView
@@ -122,7 +122,11 @@ export default function Signup() {
             </View>
 
             {/* SIGNUP BUTTON */}
-            <TouchableOpacity style={styles.button} onPress={handleSignUp} disabled={isLoading}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSignUp}
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
